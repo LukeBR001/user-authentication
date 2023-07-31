@@ -1,0 +1,19 @@
+version: "3.7"
+
+volumes:
+  database_data:
+    driver: local
+
+services:
+  db:
+    image: postgres:13.4-alpine
+    container_name: auth-db
+    restart: on-failure
+    environment:
+      POSTGRES_DB: users
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: s3cr3tp4ssw0rd
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data

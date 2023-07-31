@@ -1,0 +1,41 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: user-authentication
+  jackson:
+    time-zone: UTC
+    deserialization:
+      fail-on-unknown-properties: false
+    serialization:
+      write-dates-as-timestamps: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/users
+    username: postgres
+    password: s3cr3tp4ssw0rd
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 30
+      max-lifetime: 10000
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    generate-ddl: false
+    show-sql: true
+    properties:
+      hibernate:
+        default_schema: public
+        temp.use_jdbc_metadata_defaults: false
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/users
+    user: postgres
+    password: s3cr3tp4ssw0rd
+    baselineOnMigrate: false
+    default-schema: public
+    schemas: public
+    locations:
+      - classpath:/db/migration
