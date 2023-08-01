@@ -1,6 +1,6 @@
 package com.example.userauthentication.repository;
 
-import com.example.userauthentication.domain.Role;
+import com.example.userauthentication.models.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Setter;
@@ -25,7 +25,7 @@ public class UserEntity implements UserDetails {
 
     private String status;
 
-    private Role role;
+    private String role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
