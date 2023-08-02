@@ -2,7 +2,9 @@ package com.example.userauthentication.repository;
 
 import com.example.userauthentication.models.Role;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,8 +13,9 @@ import java.util.Collection;
 
 @Table(name = "users")
 @Entity(name = "users")
-@Data
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -26,6 +29,17 @@ public class UserEntity implements UserDetails {
     private String status;
 
     private String role;
+
+    public UserEntity(
+            String username,
+            String password,
+            String role
+    ){
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.status = "ACTIVE";
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
