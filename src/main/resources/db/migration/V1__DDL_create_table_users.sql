@@ -5,3 +5,5 @@ CREATE TABLE users (
     status varchar NOT NULL,
     role varchar NOT NULL
 );
+
+CREATE SEQUENCE public.users_seq
