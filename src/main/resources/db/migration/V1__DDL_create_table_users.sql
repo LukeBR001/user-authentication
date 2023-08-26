@@ -6,4 +6,4 @@ CREATE TABLE users (
     role varchar NOT NULL
 );
 
-CREATE SEQUENCE public.users_seq
+create sequence public.users_seq

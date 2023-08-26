@@ -17,9 +17,11 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserEntity implements UserDetails {
+    private static final String SEQUENCE = "users_seq";
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = SEQUENCE)
+    @SequenceGenerator(name = SEQUENCE, sequenceName = SEQUENCE, allocationSize = 1)
     private Long id;
 
     private String username;

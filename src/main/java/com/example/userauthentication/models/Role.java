@@ -1,18 +1,14 @@
 package com.example.userauthentication.models;
 
+import com.example.userauthentication.exception.auth.InvalidRoleException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public enum Role {
-    ADMIN("admin"),
-    USER("user");
-
-    private final String role;
-
-    Role(String role) {
-        this.role = role;
-    }
+    ADMIN,
+    USER;
 
     public static List<SimpleGrantedAuthority> getGrantedRoles(String role) {
         Role receivedRole = getByName(role);
@@ -32,11 +28,9 @@ public enum Role {
     }
 
     public static Role getByName(String role) {
-        for (Role r: Role.values()) {
-            if (r.role.equals(role)) {
-                return r;
-            }
-        }
-        throw new RuntimeException("Role nonexistent: " + role);
+        return Stream.of(values())
+                .filter(r -> r.name().equals(role))
+                .findFirst()
+                .orElseThrow(() -> new InvalidRoleException("Invalid role: " + role));
     }
 }

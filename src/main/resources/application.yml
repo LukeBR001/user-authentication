@@ -39,3 +39,8 @@ spring:
     schemas: public
     locations:
       - classpath:/db/migration
+
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:my-secret-key}
