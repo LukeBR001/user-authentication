@@ -10,16 +10,15 @@ public enum Role {
     ADMIN,
     USER;
 
-    public static List<SimpleGrantedAuthority> getGrantedRoles(String role) {
-        Role receivedRole = getByName(role);
-        if (receivedRole.equals(ADMIN)){
+    public static List<SimpleGrantedAuthority> getGrantedRoles(Role role) {
+        if (role.equals(ADMIN)){
             return List.of(
                     new SimpleGrantedAuthority(ADMIN.name()),
                     new SimpleGrantedAuthority(USER.name())
                     );
         }
 
-        if (receivedRole.equals(USER)){
+        if (role.equals(USER)){
             return List.of(
                     new SimpleGrantedAuthority(USER.name())
             );
