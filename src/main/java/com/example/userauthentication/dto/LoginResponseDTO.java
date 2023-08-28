@@ -1,4 +1,7 @@
 package com.example.userauthentication.dto;
 
-public record LoginResponseDTO(String token) {
-}
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record LoginResponseDTO(
+        @JsonProperty("user") UserDTO userDTO,
+        String token) {}

@@ -1,27 +1,33 @@
 package com.example.userauthentication.service;
 
-import com.example.userauthentication.repository.UserEntity;
-import com.example.userauthentication.repository.UserRepository;
+import com.example.userauthentication.dto.LoginResponseDTO;
+import com.example.userauthentication.dto.UserDTO;
+import com.example.userauthentication.models.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-public class AuthService implements UserDetailsService {
+public class AuthService {
 
     @Autowired
-    private UserRepository userRepository;
+    private JWTProvider jwtProvider;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username);
+    public LoginResponseDTO createLoginInfo(Authentication authentication) {
+        var user = (UserModel)authentication.getPrincipal();
+
+        var token = jwtProvider.createToken(authentication);
+
+        return buildResponseLoginInfo(user, token);
     }
 
-    public List<UserEntity> loadUsers() throws UsernameNotFoundException {
-        return userRepository.findAll();
+    private LoginResponseDTO buildResponseLoginInfo(UserModel user, String token) {
+        var userDTO = new UserDTO(
+                user.getUsername(),
+                null, //TODO: include description
+                user.role().name()
+        );
+
+        return new LoginResponseDTO(userDTO, token);
     }
 }
