@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UserServiceAuth implements UserDetailsService {
+public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
@@ -43,6 +43,5 @@ public class UserServiceAuth implements UserDetailsService {
                 Role.getByName(createUserDTO.role()).name()
         );
         return UserModel.buildFromEntity(userRepository.save(userEntity));
-
     }
 }
