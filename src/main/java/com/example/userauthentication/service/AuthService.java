@@ -23,8 +23,10 @@ public class AuthService {
 
     private LoginResponseDTO buildResponseLoginInfo(UserModel user, String token) {
         var userDTO = new UserDTO(
+                user.aggregateId(),
                 user.getUsername(),
-                null, //TODO: include description
+                user.description(),
+                user.status().name(),
                 user.role().name()
         );
 

@@ -2,6 +2,7 @@ package com.example.userauthentication.repository;
 
 import com.example.userauthentication.models.Role;
 import com.example.userauthentication.models.Status;
+import com.example.userauthentication.models.UserModel;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,10 +10,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+@Entity
 @Table(name = "users")
-@Entity(name = "users")
+@Builder
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserEntity {
@@ -23,22 +24,26 @@ public class UserEntity {
     @SequenceGenerator(name = SEQUENCE, sequenceName = SEQUENCE, allocationSize = 1)
     private Long id;
 
+    private String aggregateId;
+
     private String username;
 
     private String password;
+
+    private String description;
 
     private String status;
 
     private String role;
 
-    public UserEntity(
-            String username,
-            String password,
-            String role
-    ) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-        this.status = Status.ACTIVE.name();
+    public static UserEntity fromModel(UserModel userModel) {
+        return UserEntity.builder()
+                .aggregateId(userModel.aggregateId())
+                .username(userModel.getUsername())
+                .password(userModel.getPassword())
+                .status(userModel.status().name())
+                .role(userModel.role().name())
+                .build();
     }
 }
+

@@ -1,6 +1,11 @@
 package com.example.userauthentication.dto;
 
-public record CreateUserDTO(String username,
-                            String password,
-                            String role) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record CreateUserDTO(@NotBlank String username,
+                            @NotBlank String password,
+                            @Size(max = 255) String description,
+                            @NotBlank String role) {
+
 }

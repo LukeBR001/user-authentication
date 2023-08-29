@@ -1,6 +1,7 @@
 package com.example.userauthentication.controller;
 
 import com.example.userauthentication.dto.CreateUserDTO;
+import com.example.userauthentication.dto.UserDTO;
 import com.example.userauthentication.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<?> getUser(
+    public ResponseEntity<?> getUsers(
             @RequestParam String username
     ) {
         UserDetails user = userService.loadUserByUsername(username);
@@ -25,22 +26,19 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping
-    public ResponseEntity<?> register(@RequestBody @Valid CreateUserDTO createUserDTO) {
-        UserDetails oldUser = userService.loadUserByUsername(createUserDTO.username());
-        if (oldUser != null){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUser(
+            @PathVariable String id
+    ) {
+        //TODO: implement
 
+        return null;
+    }
+
+    @PostMapping
+    public ResponseEntity<UserDTO> createUser(@RequestBody @Valid CreateUserDTO createUserDTO) {
         var user = userService.createUser(createUserDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
-//
-//    @GetMapping("/all")
-//    @PreAuthorize("hasRole('ADMIN')")
-//    public ResponseEntity<?> getUsers() {
-//        var users = authService.loadUsers();
-//        return ResponseEntity.ok(users);
-//    }
 
 }

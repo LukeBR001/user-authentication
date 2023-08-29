@@ -6,19 +6,21 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public record UserModel(Long id,
+public record UserModel(String aggregateId,
                         String username,
                         String password,
+                        String description,
                         Status status,
                         Role role
 )
         implements UserDetails {
 
-    public static UserModel buildFromEntity(UserEntity userEntity) {
+    public static UserModel FromEntity(UserEntity userEntity) {
         return new UserModel(
-                userEntity.getId(),
+                userEntity.getAggregateId(),
                 userEntity.getUsername(),
                 userEntity.getPassword(),
+                userEntity.getDescription(),
                 Status.valueOf(userEntity.getStatus()),
                 Role.getByName(userEntity.getRole())
         );
@@ -58,6 +60,4 @@ public record UserModel(Long id,
     public boolean isEnabled() {
         return this.status.isEnabled();
     }
-
-
 }
