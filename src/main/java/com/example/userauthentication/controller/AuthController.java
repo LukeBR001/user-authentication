@@ -12,26 +12,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
-public class OauthController {
-//
-//    @Autowired
-//    private AuthenticationManager authenticationManager;
-//
-//    @Autowired
-//    private UserRepository repository;
-//
-//    @Autowired
-//    private TokenService tokenService;
+@RequestMapping("api/v0/auth")
+public class AuthController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OauthController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private AuthService authService;
 
     @Autowired
     private UserService userService;
-    @PostMapping("/login")
+    @PostMapping("/token")
     public ResponseEntity<?> login(Authentication authentication) {
         LOGGER.info("Init user authentication: {}", authentication.getName());
         var loginResponse = authService.createLoginInfo(authentication);

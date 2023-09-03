@@ -1,5 +1,6 @@
 package com.example.userauthentication.config;
 
+import com.example.userauthentication.models.Role;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -9,7 +10,6 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -33,12 +33,8 @@ import java.security.interfaces.RSAPublicKey;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-//    @Autowired
-//    SecurityFilter securityFilter;
-
-     private final RSAPublicKey publicKey;
-     private final RSAPrivateKey privateKey;
+    private final RSAPublicKey publicKey;
+    private final RSAPrivateKey privateKey;
 
     private final CustomBasicAuthEntryPoint customBasicAuthEntryPoint;
 
@@ -63,13 +59,13 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v0/users").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v0/users/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v0/users/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v0/auth/token").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v0/users").hasRole(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, "/api/v0/users/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/api/v0/users/").hasRole(Role.ADMIN.name())
                         .anyRequest().authenticated())
                 .httpBasic(http -> http.authenticationEntryPoint(customBasicAuthEntryPoint))
-                .oauth2ResourceServer(oauth -> oauth.jwt( jwt -> jwt.decoder(jwtDecoder()))
+                .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.decoder(jwtDecoder()))
                         .authenticationEntryPoint(customBasicAuthEntryPoint)
                         .accessDeniedHandler(customBearerTokenAccessDeniedHandler))
                 .build();
@@ -81,7 +77,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtEncoder jwtEncoder(){
+    public JwtEncoder jwtEncoder() {
         JWK jwk = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
         JWKSource<SecurityContext> jwkSet = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwkSet);
