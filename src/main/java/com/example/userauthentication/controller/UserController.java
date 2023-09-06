@@ -7,8 +7,11 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v0/users")
@@ -18,12 +21,10 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<?> getUsers(
-            @RequestParam String username
+    public List<UserDTO> getUsers(
+            @CurrentSecurityContext(expression = "authentication") Authentication authentication
     ) {
-        UserDetails user = userService.loadUserByUsername(username);
-
-        return ResponseEntity.ok(user);
+        return userService.loadUsers(authentication);
     }
 
     @GetMapping("/{id}")

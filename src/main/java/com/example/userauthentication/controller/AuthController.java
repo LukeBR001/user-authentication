@@ -1,6 +1,6 @@
 package com.example.userauthentication.controller;
 
-import com.example.userauthentication.service.AuthService;
+import com.example.userauthentication.service.auth.AuthService;
 import com.example.userauthentication.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
-    @PostMapping("/token")
+    @PostMapping("/login")
     public ResponseEntity<?> login(Authentication authentication) {
         LOGGER.info("Init user authentication: {}", authentication.getName());
         var loginResponse = authService.createLoginInfo(authentication);

@@ -59,10 +59,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/api/v0/auth/token").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v0/users").hasRole(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.GET, "/api/v0/users/**").hasRole(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.POST, "/api/v0/users/").hasRole(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, "/api/v0/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v0/users").hasRole(Role.ADMIN.name())
                         .anyRequest().authenticated())
                 .httpBasic(http -> http.authenticationEntryPoint(customBasicAuthEntryPoint))
                 .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.decoder(jwtDecoder()))

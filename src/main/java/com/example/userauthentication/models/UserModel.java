@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 
 public record UserModel(String aggregateId,
                         String username,
@@ -24,6 +25,13 @@ public record UserModel(String aggregateId,
                 Status.valueOf(userEntity.getStatus()),
                 Role.getByName(userEntity.getRole())
         );
+    }
+
+    public List<Role> getBellowRoles() {
+        return this.getAuthorities().stream()
+                .filter(gr -> !gr.getAuthority().equals(role.name()))
+                .map(r -> Role.valueOf(r.getAuthority()))
+                .toList();
     }
 
     @Override

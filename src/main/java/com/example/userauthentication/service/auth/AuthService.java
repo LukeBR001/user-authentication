@@ -1,11 +1,14 @@
-package com.example.userauthentication.service;
+package com.example.userauthentication.service.auth;
 
 import com.example.userauthentication.dto.LoginResponseDTO;
 import com.example.userauthentication.dto.UserDTO;
 import com.example.userauthentication.models.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AuthService {
@@ -16,7 +19,7 @@ public class AuthService {
     public LoginResponseDTO createLoginInfo(Authentication authentication) {
         var user = (UserModel)authentication.getPrincipal();
 
-        var token = jwtProvider.createToken(authentication);
+        var token = jwtProvider.createToken(buildCreateTokenDTO(authentication, user));
 
         return buildResponseLoginInfo(user, token);
     }
@@ -31,5 +34,19 @@ public class AuthService {
         );
 
         return new LoginResponseDTO(userDTO, token);
+    }
+
+    private CreateTokenDTO buildCreateTokenDTO(Authentication authentication, UserModel userModel) {
+        List<String> roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
+        return new CreateTokenDTO(
+                userModel.aggregateId(),
+                userModel.username(),
+                userModel.description() != null ? userModel.description() : "",
+                userModel.status().name(),
+                roles
+        );
     }
 }
