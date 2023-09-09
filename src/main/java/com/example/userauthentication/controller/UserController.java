@@ -1,6 +1,6 @@
 package com.example.userauthentication.controller;
 
-import com.example.userauthentication.dto.CreateUserDTO;
+import com.example.userauthentication.dto.CreateUserRequest;
 import com.example.userauthentication.dto.UserDTO;
 import com.example.userauthentication.service.UserService;
 import jakarta.validation.Valid;
@@ -28,18 +28,17 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUser(
-            @PathVariable String id
-    ) {
-        //TODO: implement
-
-        return null;
+    public UserDTO getUser(
+            @CurrentSecurityContext(expression = "authentication") Authentication authentication,
+            @PathVariable String id) {
+        return userService.loadUser(id, authentication);
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody @Valid CreateUserDTO createUserDTO) {
-        var user = userService.createUser(createUserDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
-    }
+    public UserDTO createUser(
+            @CurrentSecurityContext(expression = "authentication") Authentication authentication,
+            @RequestBody @Valid CreateUserRequest createUserRequest) {
 
+        return userService.createUser(createUserRequest, authentication);
+    }
 }

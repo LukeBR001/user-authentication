@@ -1,5 +1,8 @@
 package com.example.userauthentication.exception;
 
+import com.example.userauthentication.exception.business.CreateUserException;
+import com.example.userauthentication.exception.business.UserAlreadyExistsException;
+import com.example.userauthentication.exception.business.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,6 +30,30 @@ public class ControllerExceptionHandler {
                 "username or password is invalid",
                 request,
                 HttpStatus.UNAUTHORIZED
+        );
+    }
+
+    @ExceptionHandler({UserNotFoundException.class,
+            UserAlreadyExistsException.class,
+            CreateUserException.class})
+    public ResponseEntity<ResponseError> handleUserBusinessException(Exception ex, HttpServletRequest request) {
+        log.info("Known error {}: ", ex.getClass().getSimpleName(), ex);
+
+        return buildResponseEntity(
+                ex.getMessage(),
+                request,
+                HttpStatus.UNPROCESSABLE_ENTITY
+        );
+    }
+
+    @ExceptionHandler({IllegalArgumentException.class})
+    public ResponseEntity<ResponseError> handleIllegalArgumentException(IllegalArgumentException ex, HttpServletRequest request) {
+        log.info("Known error {}: ", ex.getClass().getSimpleName(), ex);
+
+        return buildResponseEntity(
+                "The request could not be processed because some argument is invalid",
+                request,
+                HttpStatus.BAD_REQUEST
         );
     }
 
