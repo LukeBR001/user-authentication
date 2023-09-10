@@ -2,9 +2,9 @@ package com.example.userauthentication.service;
 
 import com.example.userauthentication.dto.CreateUserRequest;
 import com.example.userauthentication.dto.UserDTO;
-import com.example.userauthentication.exception.business.CreateUserException;
 import com.example.userauthentication.exception.business.UserAlreadyExistsException;
 import com.example.userauthentication.exception.business.UserNotFoundException;
+import com.example.userauthentication.exception.business.UserWithoutPermission;
 import com.example.userauthentication.models.Role;
 import com.example.userauthentication.models.Status;
 import com.example.userauthentication.models.UserModel;
@@ -39,8 +39,8 @@ public class UserService implements UserDetailsService {
     }
 
     public List<UserDTO> loadUsers(Authentication authentication) {
-        var userModel = getPrincipalUser(authentication);
-        var bellowRoleNames = userModel.getBellowRoles().stream().map(Role::name).toList();
+        var principalUser = getPrincipalUser(authentication);
+        var bellowRoleNames = principalUser.getBellowRoles().stream().map(Role::name).toList();
 
         return getUsersByRoles(bellowRoleNames).stream()
                 .map(UserDTO::fromModel)
@@ -49,11 +49,9 @@ public class UserService implements UserDetailsService {
 
     public UserDTO loadUser(String aggregateId, Authentication authentication) {
         var principalRoles = getPrincipalUser(authentication).getBellowRoles();
-        var wantedUser = getUser(aggregateId);
+        var wantedUser = getUserByAggregateId(aggregateId);
 
-        if (!principalContainsInBellowRole(principalRoles, wantedUser.role())) {
-            throw new UserNotFoundException("User not found or no has bellow role");
-        }
+        validateRoles(principalRoles, wantedUser.role());
 
         return UserDTO.fromModel(wantedUser);
     }
@@ -67,11 +65,35 @@ public class UserService implements UserDetailsService {
         return UserDTO.fromModel(userModel);
     }
 
+    public void deleteUser(String aggregateId, Authentication authentication) {
+        var principalRoles = getPrincipalUser(authentication).getBellowRoles();
+        var userToDelete = getUserByAggregateId(aggregateId);
+
+        validateRoles(principalRoles, userToDelete.role());
+
+        deleteUser(userToDelete);
+    }
+
+    private void deleteUser(UserModel userToDelete) {
+        var updatedUser = UserModel.buildDeletedUser(userToDelete);
+
+        var oldUser = userRepository.findByAggregateId(updatedUser.aggregateId()).get();
+        var newUser = new UserEntity(
+                oldUser.getId(),
+                oldUser.getAggregateId(),
+                updatedUser.username(),
+                updatedUser.password(),
+                updatedUser.description(),
+                updatedUser.status().name(),
+                updatedUser.role().name()
+        );
+        userRepository.saveAndFlush(newUser);
+    }
+
     private void validateCreateUserRequest(CreateUserRequest createUserRequest, Authentication authentication) {
         var principalRoles = getPrincipalUser(authentication).getBellowRoles();
-        if (!principalContainsInBellowRole(principalRoles, Role.valueOf(createUserRequest.role()))) {
-            throw new CreateUserException("trying to create a user with a role equal to or greater than yours");
-        }
+        var userRoleRequest = Role.valueOf(createUserRequest.role());
+        validateRoles(principalRoles, userRoleRequest);
 
         var oldUser = loadUserByUsername(createUserRequest.username());
         if (oldUser != null) {
@@ -79,7 +101,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    private UserModel getUser(String aggregateId) {
+    private UserModel getUserByAggregateId(String aggregateId) {
         var userEntity = userRepository.findByAggregateId(aggregateId)
                 .orElseThrow(() -> new UserNotFoundException("User not found by aggregateId: " + aggregateId));
         return UserModel.FromEntity(userEntity);
@@ -108,7 +130,9 @@ public class UserService implements UserDetailsService {
 
     }
 
-    private static boolean principalContainsInBellowRole(List<Role> principalRoles, Role wantedUserRole) {
-        return principalRoles.contains(wantedUserRole);
+    private static void validateRoles(List<Role> principalRoles, Role wantedUserRole) {
+        if (!principalRoles.contains(wantedUserRole)) {
+            throw new UserWithoutPermission("It is not possible to manipulate a user with a role equal to or greater than yours");
+        }
     }
 }

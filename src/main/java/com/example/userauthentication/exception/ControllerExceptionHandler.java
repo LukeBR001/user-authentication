@@ -3,6 +3,7 @@ package com.example.userauthentication.exception;
 import com.example.userauthentication.exception.business.CreateUserException;
 import com.example.userauthentication.exception.business.UserAlreadyExistsException;
 import com.example.userauthentication.exception.business.UserNotFoundException;
+import com.example.userauthentication.exception.business.UserWithoutPermission;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,8 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler({UserNotFoundException.class,
             UserAlreadyExistsException.class,
-            CreateUserException.class})
+            CreateUserException.class,
+            UserWithoutPermission.class})
     public ResponseEntity<ResponseError> handleUserBusinessException(Exception ex, HttpServletRequest request) {
         log.info("Known error {}: ", ex.getClass().getSimpleName(), ex);
 

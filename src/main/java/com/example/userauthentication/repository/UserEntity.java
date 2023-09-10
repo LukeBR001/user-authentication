@@ -1,14 +1,11 @@
 package com.example.userauthentication.repository;
 
-import com.example.userauthentication.models.Role;
-import com.example.userauthentication.models.Status;
 import com.example.userauthentication.models.UserModel;
 import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "users")

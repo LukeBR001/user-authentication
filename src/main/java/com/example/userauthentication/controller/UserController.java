@@ -5,8 +5,6 @@ import com.example.userauthentication.dto.UserDTO;
 import com.example.userauthentication.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
@@ -40,5 +38,12 @@ public class UserController {
             @RequestBody @Valid CreateUserRequest createUserRequest) {
 
         return userService.createUser(createUserRequest, authentication);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(
+            @CurrentSecurityContext(expression = "authentication") Authentication authentication,
+            @PathVariable String id) {
+        userService.deleteUser(id, authentication);
     }
 }

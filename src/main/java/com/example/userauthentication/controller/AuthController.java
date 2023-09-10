@@ -1,11 +1,11 @@
 package com.example.userauthentication.controller;
 
-import com.example.userauthentication.service.auth.AuthService;
+import com.example.userauthentication.dto.LoginResponseDTO;
 import com.example.userauthentication.service.UserService;
+import com.example.userauthentication.service.auth.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,15 +23,11 @@ public class AuthController {
     @Autowired
     private UserService userService;
     @PostMapping("/login")
-    public ResponseEntity<?> login(Authentication authentication) {
+    public LoginResponseDTO login(Authentication authentication) {
         LOGGER.info("Init user authentication: {}", authentication.getName());
         var loginResponse = authService.createLoginInfo(authentication);
 
         LOGGER.info("Authenticated user: {}", loginResponse);
-
-
-//        var auth = authenticationManager.authenticate(usernamePassword);
-//        var token = tokenService.generateToken((UserEntity) auth.getPrincipal());
-        return ResponseEntity.ok(loginResponse);
+        return loginResponse;
     }
 }

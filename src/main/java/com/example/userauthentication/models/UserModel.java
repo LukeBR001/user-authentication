@@ -27,6 +27,17 @@ public record UserModel(String aggregateId,
         );
     }
 
+    public static UserModel buildDeletedUser(UserModel userToDelete) {
+        return new UserModel(
+                userToDelete.aggregateId(),
+                userToDelete.username(),
+                userToDelete.password(),
+                userToDelete.description(),
+                Status.DELETED,
+                userToDelete.role()
+        );
+    }
+
     public List<Role> getBellowRoles() {
         return this.getAuthorities().stream()
                 .filter(gr -> !gr.getAuthority().equals(role.name()))
