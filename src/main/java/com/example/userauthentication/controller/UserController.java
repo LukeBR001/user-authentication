@@ -4,6 +4,7 @@ import com.example.userauthentication.dto.CreateUserRequest;
 import com.example.userauthentication.dto.UserDTO;
 import com.example.userauthentication.service.UserService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v0/users")
+@Slf4j
 public class UserController {
 
     @Autowired
@@ -22,14 +24,18 @@ public class UserController {
     public List<UserDTO> getUsers(
             @CurrentSecurityContext(expression = "authentication") Authentication authentication
     ) {
-        return userService.loadUsers(authentication);
+        List<UserDTO> userDTOS = userService.loadUsers(authentication);
+        log.info("Users successfully returned: {}", userDTOS);
+        return userDTOS;
     }
 
     @GetMapping("/{id}")
     public UserDTO getUser(
             @CurrentSecurityContext(expression = "authentication") Authentication authentication,
             @PathVariable String id) {
-        return userService.loadUser(id, authentication);
+        UserDTO userDTO = userService.loadUser(id, authentication);
+        log.info("User successfully fetched: {}", userDTO);
+        return userDTO;
     }
 
     @PostMapping
@@ -37,7 +43,9 @@ public class UserController {
             @CurrentSecurityContext(expression = "authentication") Authentication authentication,
             @RequestBody @Valid CreateUserRequest createUserRequest) {
 
-        return userService.createUser(createUserRequest, authentication);
+        UserDTO userDTO = userService.createUser(createUserRequest, authentication);
+        log.info("User successfully created: {}", userDTO);
+        return userDTO;
     }
 
     @DeleteMapping("/{id}")
@@ -45,5 +53,6 @@ public class UserController {
             @CurrentSecurityContext(expression = "authentication") Authentication authentication,
             @PathVariable String id) {
         userService.deleteUser(id, authentication);
+        log.info("User {} successfully deleted", id);
     }
 }
