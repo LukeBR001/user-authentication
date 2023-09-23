@@ -59,7 +59,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "/api/v0/auth/login").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/api/v0/users").hasRole(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, "/api/v0/users/**").hasAnyAuthority("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v0/users/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v0/users/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v0/users/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated())
                 .httpBasic(http -> http.authenticationEntryPoint(customBasicAuthEntryPoint))
                 .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.decoder(jwtDecoder()))

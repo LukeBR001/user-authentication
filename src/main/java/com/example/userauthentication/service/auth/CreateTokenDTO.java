@@ -6,5 +6,5 @@ public record CreateTokenDTO(String aggregateId,
                              String username,
                              String description,
                              String status,
-                             List<String> roles) {
+                             String role) {
 }

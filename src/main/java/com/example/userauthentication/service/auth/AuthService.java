@@ -37,16 +37,13 @@ public class AuthService {
     }
 
     private CreateTokenDTO buildCreateTokenDTO(Authentication authentication, UserModel userModel) {
-        List<String> roles = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
 
         return new CreateTokenDTO(
                 userModel.aggregateId(),
                 userModel.username(),
                 userModel.description() != null ? userModel.description() : "",
                 userModel.status().name(),
-                roles
+                userModel.role().name()
         );
     }
 }

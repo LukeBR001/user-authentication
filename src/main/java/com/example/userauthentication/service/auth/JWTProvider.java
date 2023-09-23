@@ -18,7 +18,7 @@ public class JWTProvider {
     private static final String USERNAME_CLAIM = "username";
     private static final String DESCRIPTION_CLAIM = "description";
     private static final String STATUS_CLAIM = "status";
-    private static final String ROLES_CLAIM = "roles";
+    private static final String ROLE_CLAIM = "roles";
 
     @Value("${api.security.token.expiration-in-hours}")
     private Long expirationInHours;
@@ -36,7 +36,7 @@ public class JWTProvider {
                 .claim(USERNAME_CLAIM, tokenCreation.username())
                 .claim(DESCRIPTION_CLAIM, tokenCreation.description())
                 .claim(STATUS_CLAIM, tokenCreation.status())
-                .claim(ROLES_CLAIM, StringUtils.join(tokenCreation.roles(), ","))
+                .claim(ROLE_CLAIM, tokenCreation.role())
                 .expiresAt(genExpirationDate())
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

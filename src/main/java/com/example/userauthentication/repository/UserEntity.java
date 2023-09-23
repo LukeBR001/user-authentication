@@ -39,6 +39,7 @@ public class UserEntity {
                 .username(userModel.getUsername())
                 .password(userModel.getPassword())
                 .status(userModel.status().name())
+                .description(userModel.description())
                 .role(userModel.role().name())
                 .build();
     }

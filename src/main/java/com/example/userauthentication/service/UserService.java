@@ -58,11 +58,14 @@ public class UserService implements UserDetailsService {
 
     public UserDTO createUser(CreateUserRequest createUserRequest, Authentication authentication) {
         validateCreateUserRequest(createUserRequest, authentication);
-
         var userModel = buildUserModelToCreate(createUserRequest);
-        userRepository.save(UserEntity.fromModel(userModel));
+        var createdUser = createUser(userModel);
+        return UserDTO.fromModel(createdUser);
+    }
 
-        return UserDTO.fromModel(userModel);
+    private UserModel createUser(UserModel userModel) {
+        var savedEntity = userRepository.save(UserEntity.fromModel(userModel));
+        return UserModel.FromEntity(savedEntity);
     }
 
     public void deleteUser(String aggregateId, Authentication authentication) {
